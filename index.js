@@ -258,7 +258,13 @@ function wire ({ server: newServer, port, ...undiciOpts }) {
       }
 
       if (hasInject) {
-        server.inject(injectOpts, onInject)
+        if (server.inject.length === 2) {
+          server.inject(injectOpts, onInject)
+        } else {
+          server.inject(injectOpts)
+            .then((res) => onInject(null, res))
+            .catch((err) => onInject(err))
+        }
       } else {
         inject(server, injectOpts, onInject)
       }
